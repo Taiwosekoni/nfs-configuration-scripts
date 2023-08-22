@@ -1,23 +1,49 @@
-NFS VOLUME ---an external server not part of your cluster but needed to connect NFS volume to your k8s database pod
-Steps in configuring NFS server on AWS
-create an ubuntu server on AWS
-•	Sudo apt-get update
-•	Sudo apt install nfs-kernel-server -y
-•	Create the export directory
-o	Sudo mkdir -p /mnt/share/
-•	We want all clients access to the directory so we will remove restrictive permissions
-o	Sudo chown nobody:nogroup /mnt/share/
-o	Sudo chmod 777 /mnt/share/
-•	Assign server access to clients through NFS export file
-o	Sudo vi /etc/exports
-o	Add /mnt/share/ *(rw,sync,no_subtree_check,no_root_squash)
-o	Save and quit
-•	Export the shared directory
-o	Sudo exportfs -a
-o	Sudo systemctl restart nfs-kernel-server
-•	Open firewall for client on port 2049
-o	Open port on security group in AWS
-•	Configure the client machine by installing NFS common on all your nodes
-o	Sudo apt-get update -y && sudo apt-get install nfs-common -y
-o	Sudo apt-get install nfs-common
+Configuration of NFS Server
+=======================
 
+Step 1: Install NFS Kernel Server
+Before installing the NFS Kernel server, 
+  we need to update our system’s repository index with that of the Internet 
+  through the following apt command as sudo:
+
+$ sudo apt-get update
+
+The above command lets us install the latest available version of a software through the Ubuntu repositories.
+
+Now, run the following command in order to install the NFS Kernel Server on your system:
+
+$ sudo apt install nfs-kernel-server -y
+
+
+Step 2: Create the Export Directory
+
+$ sudo mkdir -p /mnt/share/
+
+=# As we want all clients to access the directory,
+    we will remove restrictive permissions.
+$ sudo mkdir -p /mnt/share/
+$ sudo chown nobody:nogroup /mnt/share/
+$ sudo chmod 777 /mnt/share/
+
+Step 3: Assign server access to client(s) through NFS export file
+
+$ sudo vi /etc/exports
+ add the line below to the end of the file.
+/mnt/share/ *(rw,sync,no_subtree_check,no_root_squash)
+
+Step 4: Export the shared directory
+
+$ sudo exportfs -a
+
+$ sudo systemctl restart nfs-kernel-server
+
+Step 5: Open firewall for the client(s) PORT 2049
+
+
+Configuring the Client Machine(s)
+==============================
+
+Step 1: Install NFS Common
+Before installing the NFS Common application, we need to update our system’s repository index with that of the Internet through the following apt command as sudo:
+
+$ sudo apt-get update && sudo apt-get install nfs-common -y
